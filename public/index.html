@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Kullanıcı Girişi</title>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Kullanıcı Girişi</h1>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Kullanıcı Adı" required>
+            <input type="password" id="password" placeholder="Şifre" required>
+            <button type="submit">Giriş</button>
+        </form>
+        <button id="registerButton">Kayıt Ol</button>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Giriş başarılı!');
+                } else {
+                    alert('Giriş başarısız: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('Bir hata oluştu, lütfen tekrar deneyin.');
+            }
+        });
+
+        document.getElementById('registerButton').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                alert('Lütfen kullanıcı adı ve şifre girin.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
+                } else {
+                    alert('Kayıt başarısız: ' + (data.message || 'Bilinmeyen bir hata oluştu.'));
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('Bir hata oluştu, lütfen tekrar deneyin.');
+            }
+        });
+    </script>
+</body>
+</html>
